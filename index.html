@@ -1,16 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/style.css" />
     <title>MacOutlet</title>
-</head>
-<body>
+  </head>
+  <body>
+    <header class="header">
+      <div class="wrapper header__wrapper">
+        <div class="header__wrapper__top">
+          <img src="img/other/logo.png" alt="Logotype" />
+          <div></div>
+        </div>
+        <div class="header__slider"></div>
+        <div class="header__wrapper__bot">
+          <input
+            type="text"
+            id="deviceInp"
+            placeholder="Enter device name..."
+          />
+          <select id="sortDevices">
+            <option value="def">Default</option>
+            <option value="asc">Ascend</option>
+            <option value="desc">Descend</option>
+          </select>
+        </div>
+      </div>
+    </header>
+    <main>
+      <section class="cards">
+        <h1>Cards Here</h1>
+      </section>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="js/slick.min.js"></script>
     <script src="js/items.js"></script>
-</body>
+    <script src="js/script.js"></script>
+  </body>
 </html>
-
-
-

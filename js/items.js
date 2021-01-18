@@ -31,7 +31,11 @@ const items = [
             weight: '1.29', // Кг
         },
         os: 'macOS',
-        InTheBox: ['MacBook Air', '30W USB-C Power Adapter', 'USB-C Charge Cable (2 m)']
+        InTheBox: ['MacBook Air', '30W USB-C Power Adapter', 'USB-C Charge Cable (2 m)'],
+        orderInfo: {
+        	inStock: 435, // кол-во едениц товара в наличии
+        	reviews: 77, // процент положительных отзывов
+        }
     },
     {
         id: 2,
@@ -65,7 +69,11 @@ const items = [
             weight: '1.29', // Кг
         },
         os: 'macOS',
-        InTheBox: ['MacBook Air', '30W USB-C Power Adapter', 'USB-C Charge Cable (2 m)']
+        InTheBox: ['MacBook Air', '30W USB-C Power Adapter', 'USB-C Charge Cable (2 m)'],
+        orderInfo: {
+        	inStock: 0, // кол-во едениц товара в наличии
+        	reviews: 84, // процент положительных отзывов
+        }
     },
     {
         id: 3 ,
@@ -99,7 +107,11 @@ const items = [
             weight: '1.4', // Кг
         },
         os: 'macOS',
-        InTheBox: ['MacBook pro 13', '61W USB-C Power Adapter', 'USB-C Charge Cable (2 m)']
+        InTheBox: ['MacBook pro 13', '61W USB-C Power Adapter', 'USB-C Charge Cable (2 m)'],
+        orderInfo: {
+        	inStock: 25, // кол-во едениц товара в наличии
+        	reviews: 85, // процент положительных отзывов
+        }
     },
     {
         id: 4 ,
@@ -133,7 +145,11 @@ const items = [
             weight: '1.4', // Кг
         },
         os: 'macOS',
-        InTheBox: ['MacBook pro 13', '61W USB-C Power Adapter', 'USB-C Charge Cable (2 m)']
+        InTheBox: ['MacBook pro 13', '61W USB-C Power Adapter', 'USB-C Charge Cable (2 m)'],
+        orderInfo: {
+        	inStock: 256, // кол-во едениц товара в наличии
+        	reviews: 80, // процент положительных отзывов
+        }
     },
     {
         id: 5 ,
@@ -167,7 +183,11 @@ const items = [
             weight: '2', // Кг
         },
         os: 'macOS',
-        InTheBox: ['MacBook pro 16', '96W USB-C Power Adapter', 'USB-C Charge Cable (2 m)']
+        InTheBox: ['MacBook pro 16', '96W USB-C Power Adapter', 'USB-C Charge Cable (2 m)'],
+        orderInfo: {
+        	inStock: 124, // кол-во едениц товара в наличии
+        	reviews: 91, // процент положительных отзывов
+        }
     },
     {
         id: 6 ,
@@ -201,7 +221,11 @@ const items = [
             weight: '2', // Кг
         },
         os: 'macOS',
-        InTheBox: ['MacBook pro 16', '96W USB-C Power Adapter', 'USB-C Charge Cable (2 m)']
+        InTheBox: ['MacBook pro 16', '96W USB-C Power Adapter', 'USB-C Charge Cable (2 m)'],
+        orderInfo: {
+        	inStock: 69, // кол-во едениц товара в наличии
+        	reviews: 90, // процент положительных отзывов
+        }
     },
     {
         id: 7 ,
@@ -235,7 +259,11 @@ const items = [
             weight: '5.44', // Кг
         },
         os: 'macOS',
-        InTheBox: ['iMac ', 'Magic Keyboard', 'Magic Mouse 2', 'Power cord', 'Lightning to USB Cable', 'Polishing cloth']
+        InTheBox: ['iMac ', 'Magic Keyboard', 'Magic Mouse 2', 'Power cord', 'Lightning to USB Cable', 'Polishing cloth'],
+        orderInfo: {
+        	inStock: 742, // кол-во едениц товара в наличии
+        	reviews: 75, // процент положительных отзывов
+        }
     },
     {
         id: 8 ,
@@ -269,7 +297,11 @@ const items = [
             weight: '8.92', // Кг
         },
         os: 'macOS',
-        InTheBox: ['iMac with Retina 5K display ', 'Magic Keyboard', 'Magic Mouse 2', 'Power cord', 'Lightning to USB Cable', 'Polishing cloth']
+        InTheBox: ['iMac with Retina 5K display ', 'Magic Keyboard', 'Magic Mouse 2', 'Power cord', 'Lightning to USB Cable', 'Polishing cloth'],
+        orderInfo: {
+        	inStock: 0, // кол-во едениц товара в наличии
+        	reviews: 99, // процент положительных отзывов
+        }
     },
     {
         id: 9 ,
@@ -303,7 +335,11 @@ const items = [
             weight: '18', // Кг
         },
         os: 'macOS',
-        InTheBox: ['Mac Pro', 'Magic Keyboard with Numeric Keypad', 'Magic Mouse 2', 'USB-C to Lightning Cable (1 m)', 'Power cord (2 m)']
+        InTheBox: ['Mac Pro', 'Magic Keyboard with Numeric Keypad', 'Magic Mouse 2', 'USB-C to Lightning Cable (1 m)', 'Power cord (2 m)'],
+        orderInfo: {
+        	inStock: 587, // кол-во едениц товара в наличии
+        	reviews: 56, // процент положительных отзывов
+        }
     },
     {
         id: 10 ,
@@ -337,7 +373,11 @@ const items = [
             weight: '0.470', // Кг
         },
         os: 'macOS',
-        InTheBox: ['iPad Pro', 'USB-C Charge Cable (1 meter)', '18W USB-C Power Adapter']
+        InTheBox: ['iPad Pro', 'USB-C Charge Cable (1 meter)', '18W USB-C Power Adapter'],
+        orderInfo: {
+        	inStock: 32, // кол-во едениц товара в наличии
+        	reviews: 99, // процент положительных отзывов
+        }
     },
     {
         id: 34 ,
@@ -371,7 +411,11 @@ const items = [
             weight: '0.458', // Кг
         },
         os: 'macOS',
-        InTheBox: ['iPad Air', 'USB-C Charge Cable (1 meter)', '20W USB-C Power Adapter']
+        InTheBox: ['iPad Air', 'USB-C Charge Cable (1 meter)', '20W USB-C Power Adapter'],
+        orderInfo: {
+        	inStock: 97, // кол-во едениц товара в наличии
+        	reviews: 97, // процент положительных отзывов
+        }
     },
     {
         id: 11 ,
@@ -405,7 +449,11 @@ const items = [
             weight: '0.490', // Кг
         },
         os: 'macOS',
-        InTheBox: ['iPad', 'USB-C Power Adapter', 'Lightning to USB-C Cable']
+        InTheBox: ['iPad', 'USB-C Power Adapter', 'Lightning to USB-C Cable'],
+        orderInfo: {
+        	inStock: 90, // кол-во едениц товара в наличии
+        	reviews: 0, // процент положительных отзывов
+        }
     },
     {
         id: 12 ,
@@ -439,7 +487,11 @@ const items = [
             weight: '0.300', // Кг
         },
         os: 'macOS',
-        InTheBox: ['iPad mini', 'USB-C Power Adapter', 'Lightning to USB-C Cable']
+        InTheBox: ['iPad mini', 'USB-C Power Adapter', 'Lightning to USB-C Cable'],
+        orderInfo: {
+        	inStock: 77, // кол-во едениц товара в наличии
+        	reviews: 85, // процент положительных отзывов
+        }
     },
     {
         id: 13 ,
@@ -473,7 +525,11 @@ const items = [
             weight: '1.07', // Кг
         },
         os: 'macOS',
-        InTheBox: ['Case', 'Solo Loop', '1m Magnetic Charging Cable']
+        InTheBox: ['Case', 'Solo Loop', '1m Magnetic Charging Cable'],
+        orderInfo: {
+        	inStock: 90, // кол-во едениц товара в наличии
+        	reviews: 458, // процент положительных отзывов
+        }
     },
     {
         id: 14 ,
@@ -507,7 +563,11 @@ const items = [
             weight: '1.07', // Кг
         },
         os: 'macOS',
-        InTheBox: ['Case', 'Band (can be configured for either S/M or M/L length)', '1m Magnetic Charging Cable']
+        InTheBox: ['Case', 'Band (can be configured for either S/M or M/L length)', '1m Magnetic Charging Cable'],
+        orderInfo: {
+        	inStock: 79, // кол-во едениц товара в наличии
+        	reviews: 69, // процент положительных отзывов
+        }
     },
     {
         id: 15 ,
@@ -541,7 +601,11 @@ const items = [
             weight: '1.07', // Кг
         },
         os: 'macOS',
-        InTheBox: ['Case', 'Band (can be configured for either S/M or M/L length)', '1m Magnetic Charging Cable']
+        InTheBox: ['Case', 'Band (can be configured for either S/M or M/L length)', '1m Magnetic Charging Cable'],
+        orderInfo: {
+        	inStock: 47, // кол-во едениц товара в наличии
+        	reviews: 93, // процент положительных отзывов
+        }
     },
     {
         id: 16,
@@ -575,7 +639,11 @@ const items = [
             weight: '0.164', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 73, // кол-во едениц товара в наличии
+        	reviews: 12, // процент положительных отзывов
+        }
     },
     {
         id: 17,
@@ -609,7 +677,11 @@ const items = [
             weight: '0.164', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 0, // кол-во едениц товара в наличии
+        	reviews: 73, // процент положительных отзывов
+        }
     },
     {
         id: 18,
@@ -643,7 +715,11 @@ const items = [
             weight: '0.135', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 43, // кол-во едениц товара в наличии
+        	reviews: 100, // процент положительных отзывов
+        }
     },
     {
         id: 19,
@@ -677,7 +753,11 @@ const items = [
             weight: '0.164', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 84, // кол-во едениц товара в наличии
+        	reviews: 99, // процент положительных отзывов
+        }
     },
     {
         id: 20,
@@ -711,7 +791,11 @@ const items = [
             weight: '0.164', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 2, // кол-во едениц товара в наличии
+        	reviews: 99, // процент положительных отзывов
+        }
     },
     {
         id: 21,
@@ -745,7 +829,11 @@ const items = [
             weight: '0.228', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 5, // кол-во едениц товара в наличии
+        	reviews: 100, // процент положительных отзывов
+        }
     },
     {
         id: 22,
@@ -779,7 +867,11 @@ const items = [
             weight: '0.148', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 81, // кол-во едениц товара в наличии
+        	reviews: 73, // процент положительных отзывов
+        }
     },
     {
         id: 23,
@@ -813,7 +905,11 @@ const items = [
             weight: '0.194', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 98, // кол-во едениц товара в наличии
+        	reviews: 100, // процент положительных отзывов
+        }
     },
     {
         id: 24,
@@ -847,7 +943,11 @@ const items = [
             weight: '0.194', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 115, // кол-во едениц товара в наличии
+        	reviews: 100, // процент положительных отзывов
+        }
     },
     {
         id: 25,
@@ -881,7 +981,11 @@ const items = [
             weight: '0.194', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 0, // кол-во едениц товара в наличии
+        	reviews: 100, // процент положительных отзывов
+        }
     },
     {
         id: 26,
@@ -915,7 +1019,11 @@ const items = [
             weight: '0.194', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 14', 'USB-C to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 23, // кол-во едениц товара в наличии
+        	reviews: 86, // процент положительных отзывов
+        }
     },
     {
         id: 27,
@@ -949,7 +1057,11 @@ const items = [
             weight: '0.177', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 12', 'USB-A to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 12', 'USB-A to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 34, // кол-во едениц товара в наличии
+        	reviews: 94, // процент положительных отзывов
+        }
     },
     {
         id: 28,
@@ -983,7 +1095,11 @@ const items = [
             weight: '0.177', // Кг
         },
         os: 'IOS',
-        InTheBox: ['iPhone with iOS 12', 'USB-A to Lightning Cable', 'Documentation']
+        InTheBox: ['iPhone with iOS 12', 'USB-A to Lightning Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 0, // кол-во едениц товара в наличии
+        	reviews: 94, // процент положительных отзывов
+        }
     },
     {
         id: 29,
@@ -1011,7 +1127,11 @@ const items = [
             weight: '0.425', // Кг
         },
         os: 'tvOS',
-        InTheBox: ['Apple TV 4K', 'Siri Remote', 'Power cord', 'Lightning to USB cable', 'Documentation']
+        InTheBox: ['Apple TV 4K', 'Siri Remote', 'Power cord', 'Lightning to USB cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 2, // кол-во едениц товара в наличии
+        	reviews: 99, // процент положительных отзывов
+        }
     },
     {
         id: 30,
@@ -1039,7 +1159,11 @@ const items = [
             weight: '0.425', // Кг
         },
         os: 'tvOS',
-        InTheBox: ['Apple TV 4K', 'Siri Remote', 'Power cord', 'Lightning to USB cable', 'Documentation']
+        InTheBox: ['Apple TV 4K', 'Siri Remote', 'Power cord', 'Lightning to USB cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 1, // кол-во едениц товара в наличии
+        	reviews: 100, // процент положительных отзывов
+        }
     },
     {
         id: 31,
@@ -1070,7 +1194,11 @@ const items = [
             weight: '0.04', // Кг
         },
         os: null,
-        InTheBox: ['AirPods', 'Wireless Charging Case', 'Lightning to USB-A Cable', 'Documentation']
+        InTheBox: ['AirPods', 'Wireless Charging Case', 'Lightning to USB-A Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 23, // кол-во едениц товара в наличии
+        	reviews: 100, // процент положительных отзывов
+        }
     },
     {
         id: 32,
@@ -1101,7 +1229,11 @@ const items = [
             weight: '0.04', // Кг
         },
         os: null,
-        InTheBox: ['AirPods Pro', 'Wireless Charging Case', 'Lightning to USB-C Cable', 'Documentation', 'Silicone ear tips (three sizes)']
+        InTheBox: ['AirPods Pro', 'Wireless Charging Case', 'Lightning to USB-C Cable', 'Documentation', 'Silicone ear tips (three sizes)'],
+        orderInfo: {
+        	inStock: 29, // кол-во едениц товара в наличии
+        	reviews: 94, // процент положительных отзывов
+        }
     },
     {
         id: 33,
@@ -1132,6 +1264,10 @@ const items = [
             weight: '0.38', // Кг
         },
         os: null,
-        InTheBox: ['AirPods MAx', 'Smart Case', 'Lightning to USB-C Cable', 'Documentation']
+        InTheBox: ['AirPods MAx', 'Smart Case', 'Lightning to USB-C Cable', 'Documentation'],
+        orderInfo: {
+        	inStock: 0, // кол-во едениц товара в наличии
+        	reviews: 5, // процент положительных отзывов
+        }
     },
 ];

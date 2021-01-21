@@ -109,7 +109,7 @@ renderCards(items);
 //------------------------------------------------------------------
 
 const renderModalWindow = (card) => {
-   const device = items.find(item => item.id == card.id);
+   const device = items.find(item => item.id === +card.id);
    const modalWindowCard = gElem('.modalWindowCard');
    modalWindowCard.classList.add('visible');
    const container = cElem('div', 'modalWindowCard__container');
@@ -151,50 +151,6 @@ const renderModalWindow = (card) => {
 //-------------------------- Filters -------------------------------
 //------------------------------------------------------------------
 
-class Filter {
-   constructor(){
-      this.renderItems = [...items];
-      this.config = {
-         searchValue: '',
-         sortValue: '',
-      }
-   }
-   
-   filterByName(value = this.config.searchValue) {
-      value = value.toLowerCase();
-      this.config.searchValue = value;
-      this.renderItems = items.filter((item) => {
-         const name = item.name.toLowerCase();
-         return name.includes(value);
-      });
-      this.sortItems();
-      renderCards(this.renderItems);
-   }
-
-   sortItems(value = this.config.sortValue) {
-      this.config.sortValue = value;
-      if (value === 'def') {
-         this.filterByName();
-         return;
-      }
-      this.renderItems.sort((a, b) => {
-         if (a.price > b.price) return value === 'asc' ? -1 : 1
-         if (a.price < b.price) return value === 'asc' ? 1 : -1
-         return 0;
-      })
-      renderCards(this.renderItems);
-   }
-}
-
-const filter = new Filter();
-
-gElem('#deviceInp').oninput = (e) => filter.filterByName(e.target.value);
-gElem('#sortDevices').onchange = (e) => filter.sortItems(e.target.value);
-
-//------------------------------------------------------------------
-//-------------------------- Aside filters -------------------------
-//------------------------------------------------------------------
-
 class Utils {
    constructor() {
       this.colors = this._getColors();
@@ -232,31 +188,61 @@ class Utils {
 
 utils = new Utils();
 
-class AsideFilter {
+//--------------- Create filter logic -------------------
+
+class Filter {
    constructor() {
+      this.renderItems = [...items];
+      this.config = {
+         searchValue: '',
+         sortValue: 'def',
+      }
+
       this.filtersArr = [
          {
             type: 'range',
             title: 'Price',
             variant: utils.priceRange,
+            changes: {...utils.priceRange}
          },
          {
             type: 'check',
             title: 'Colors',
             variants: utils.colors,
+            checked: [],
          },
          {
             type: 'check',
             title: 'Categories',
             variants: utils.categories,
+            checked: [],
          }
       ]
    }
 
+   changesPrice(type, price) {
+      if (!isNaN(price)) {
+         this.filtersArr[0].changes[type] = +price;
+      }
+      filtration.runFilter();
+   }
+
+   // filteredCards = [...items];
+
+}
+
+//---------- Render aside filters ------------------------
+
+class RenderFilter extends Filter {
+   constructor() {
+      super();
+      
+   }
+
    get contentRenderMethod() {
       return {
-         check: this._renderContenCheck,
-         range: this._renderContenRange,
+         check: this._renderContenCheck.bind(this),
+         range: this._renderContenRange.bind(this),
       }
    }
 
@@ -302,24 +288,93 @@ class AsideFilter {
    _renderContenRange(item) {
       const containerFrom = cElem('div');
       const labelFrom = cElem('label', null, 'From');
-      const inputFrom = cElem('input');
-      inputFrom.value = item.variant.from
+      const inputFrom = cElem('input', 'inputFrom');
+      inputFrom.value = item.variant.from;
+      
       containerFrom.append(labelFrom, inputFrom);
 
       const containerTo = cElem('div');
       const labelTo = cElem('label', null, 'To');
-      const inputTo = cElem('input');
-      inputTo.value = item.variant.to
+      const inputTo = cElem('input', 'inputTo');
+      inputTo.value = item.variant.to;
+      
       containerTo.append(labelTo, inputTo);
 
       return [containerFrom, containerTo];
    }
-
 }
 
-const asideFilter = new AsideFilter();
+const asideFilter = new RenderFilter();
 asideFilter.renderFilters();
 
+//------------------------------------------------------------------
+//--------------------- Filtration ---------------------------------
+//------------------------------------------------------------------
 
+class Filtration extends Filter{
+   constructor(){
+      super();
+      
+      this.runFilter = () => {
+         this.filteredCards = [...items];
+         this.filterByName();
+         this.sortItems();
+         this.filterByPrice();
+         renderCards(this.filteredCards)
+      }
+   }
 
+//--  1
 
+   filterByName() {
+      this.filteredCards = items.filter((item) => {
+         const name = item.name.toLowerCase();
+         return name.includes(this.config.searchValue);
+      });
+   }
+
+//--  2
+
+   sortItems(value = this.config.sortValue, arr = this.filteredCards) {
+      if (value === 'def') {
+         return;
+      }
+      arr.sort((a, b) => {
+         if (a.price > b.price) return value === 'asc' ? -1 : 1
+         if (a.price < b.price) return value === 'asc' ? 1 : -1
+         return 0;
+      })
+   }
+
+//--  3
+
+   filterByPrice() {
+         this.filteredCards = this.filteredCards.filter(item => {
+            const result = item.price >= filtration.filtersArr[0].changes.from 
+            && item.price <= filtration.filtersArr[0].changes.to;
+            return result;
+         })
+
+      
+   }
+}
+
+const filtration = new Filtration();
+
+gElem('#deviceInp').oninput = (e) => {
+   filtration.config.searchValue = e.target.value.toLowerCase();
+   filtration.runFilter();
+};
+gElem('#sortDevices').onchange = (e) => {
+   filtration.config.sortValue = e.target.value;
+   filtration.runFilter()};
+
+gElem('.inputFrom').oninput = (e) => {
+   const value = e.target.value;
+   filtration.changesPrice('from', value);
+}
+
+gElem('.inputTo').oninput = (e) => {
+   const value = e.target.value;
+   filtration.changesPrice('to', value);
+}

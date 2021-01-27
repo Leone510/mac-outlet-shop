@@ -544,7 +544,7 @@ const items = [
             cores: null,
         },
         ram: null, // Гб
-        storage: 22.1654, // TB
+        storage: 16, // TB
         touchId: false,
         faceId: false,
         wireless: ['Wi-Fi', 'Bluetooth 5.0'],

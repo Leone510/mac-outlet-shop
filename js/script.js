@@ -42,23 +42,26 @@ $(document).ready(function() {
 });
 
 const bannerUrls = [
-   'banners/air_pods_max_banner.jpg',
-   'banners/airpods_pro_banner.png',
-   'banners/apple_tv_banner.png',
-   'banners/ipad_air_banner.jpg',
-   'banners/iphone_12_banner.jpg',
-   'banners/mac_book_banner.jpg',
-   'banners/Apple_watch_banner.jpg'
+   {name: 'banners/air_pods_max_banner.jpg', id: 33},
+   {name: 'banners/airpods_pro_banner.png', id: 32},
+   {name: 'banners/apple_tv_banner.png', id: 30},
+   {name: 'banners/ipad_air_banner.jpg', id: 34},
+   {name: 'banners/iphone_12_banner.jpg', id: 16},
+   {name: 'banners/mac_book_banner.jpg', id: 6},
+   {name: 'banners/Apple_watch_banner.jpg', id: 13},
 ];
 
 const renderSlideItem = banner => {
    const sliderItem = cElem('div', 'header__slider__item');
    const img = cElem('img', 'header__slider__item__img');
-   const itemName = banner.split('/')[1].slice(0, -11).split('_')
+   const itemName = banner.name.split('/')[1].slice(0, -11).split('_')
                           .map(word => word[0].toUpperCase() + word.substring(1)).join(' ');
    const title = cElem('h1', 'header__slider__item__title', itemName)
    const btn = cElem('button', 'header__slider__item__btn', 'Add to cart...');
-   img.src = `img/${banner}`;
+   btn.onclick = e => {
+      cartInstance.addToCart(banner.id);
+   }
+   img.src = `img/${banner.name}`;
    sliderItem.append(img, title, btn);
    gElem(".header__slider").append(sliderItem);
 }
@@ -75,27 +78,39 @@ const renderCard = device => {
          return 'card__btnDis';
       } return 'card__btn';
    }
+   const btnClass = chekedBtn();
 
    const container = cElem('div', 'card');
-   container.id = device.id;
    const innerCard = {
       img: cElem('img', 'card__img'),
       title: cElem('h2', 'card__title', device.name),
       onStock: cElem('p', 'card__stock', `${device.orderInfo.inStock} left in stock`),
       price: cElem('p', 'card__price', `Price: ${device.price} $`),
-      btnAddToCart: cElem('button', chekedBtn(), 'Add to cart...'),
+      btnAddToCart: cElem('button', btnClass, 'Add to cart...'),
       statistic: cElem('div', 'card__stats'),
    }
    innerCard.img.src = `img/${device.imgUrl}`;
+
+   if (innerCard.btnAddToCart.classList[0] === 'card__btn') {
+      innerCard.btnAddToCart.onclick = e => {
+         e.stopPropagation();
+         cartInstance.addToCart(device.id);
+      }
+   }
+
    const statsLeft = cElem('div', 'card__stats__left');
    const statsRight = cElem('div', 'card__stats__right');
    statsLeft.innerHTML = `<p>${device.orderInfo.reviews}% Positive reviews<br/>avarage</p>`
    statsRight.innerHTML = `<p>${device.price}<br/>orders</p>`
    innerCard.statistic.append(statsLeft, statsRight);
    container.append(...(Object.values(innerCard)));
+
+   container.id = device.id;
+   container.btn = btnClass;
    container.addEventListener('click', e => {
-      renderModalWindow(e.currentTarget);
-   }, true)
+      renderModalWindow(container);
+   })
+
    return container;
 }
 
@@ -122,7 +137,7 @@ const renderModalWindow = (card) => {
    img.src = `img/${device.imgUrl}`;
    modalWindowCard.addEventListener('click', e => {
       e.stopPropagation();
-      modalWindowCard.classList.remove('visible');
+      e.target.classList[0] === 'modalWindowCard' && modalWindowCard.classList.remove('visible');
    })
    containerLeft.append(img);
 
@@ -142,7 +157,13 @@ const renderModalWindow = (card) => {
 
    const price = cElem('p', 'modalWindowCard__container__right__price', `$ ${device.price}`);
    const stock = cElem('p', 'modalWindowCard__container__right__stock', `Stock: ${device.orderInfo.inStock} pcs.`);
-   const btn = cElem('button', 'card__btn', 'Add to cart...');
+   const btn = cElem('button', card.btn, 'Add to cart...');
+   if (btn.classList[0] === 'card__btn') {
+      btn.onclick = e => {
+         e.stopPropagation();
+         cartInstance.addToCart(device.id);
+      }
+   }
    containerRight.append(price, stock, btn);
 
    container.append(containerLeft, containerMid, containerRight);
@@ -250,9 +271,18 @@ class Filter {
    }
 
    changesPrice(type, price) {
-      if (!isNaN(price)) {
+      if (isNaN(price)) {
+         return;
+      }
+      if (type === 'from' && price < this.filtersArr[0].variant.from) {
+         gElem('.inputRangeFrom').value = +this.filtersArr[0].variant.from
+      }
+      if (type === 'to' && price > this.filtersArr[0].variant.to) {
+         gElem('.inputRangeTo').value = +this.filtersArr[0].variant.to
+      } else {
          this.filtersArr[0].changes[type] = +price;
       }
+      
       filtration.runFilter();
    }
 
@@ -316,6 +346,9 @@ class RenderFilter extends Filter {
       indexToRemove === -1 || item.variants.splice(indexToRemove, 1);
       return item.variants.map(variant => {
          const title = cElem('span', null, variant);
+         if (item.title === 'Storage memory') {
+            title.innerText += ' Gb';
+         }
          const label = cElem('label');
          const inp = cElem('input');
          inp.type = 'checkbox';
@@ -329,7 +362,7 @@ class RenderFilter extends Filter {
    _renderContenRange(item) {
       const containerFrom = cElem('div');
       const labelFrom = cElem('label', null, 'From');
-      const inputFrom = cElem('input');
+      const inputFrom = cElem('input', 'inputRangeFrom');
       inputFrom.value = item.variant.from;
       inputFrom.classList.add(item.classFr);
       
@@ -337,7 +370,7 @@ class RenderFilter extends Filter {
 
       const containerTo = cElem('div');
       const labelTo = cElem('label', null, 'To');
-      const inputTo = cElem('input');
+      const inputTo = cElem('input', 'inputRangeTo');
       inputTo.value = item.variant.to;
       inputTo.classList.add(item.classTo);
       
@@ -421,6 +454,7 @@ class Filtration extends Filter{
 
 const filtration = new Filtration();
 
+//------------------ Events -----------------------------------
 
 const nameInp = gElem('#deviceInp');
 nameInp.oninput = (e) => {
@@ -470,4 +504,182 @@ checkOS.forEach(item => {
       filtration.changesChecked(displaysRange, 4);
    }
 })
+
+//------------------------------------------------------------------
+//------------------------ Cart ------------------------------------
+//------------------------------------------------------------------
+
+class Cart {
+   constructor() {
+      this. items = [];
+      this.totalCount = 0;
+      this.totalPrice = 0;
+      this._getFromLS();
+   }
+
+   _getFromLS() {
+      const cartAsJson = localStorage.getItem('cart');
+      if (cartAsJson !== null) {
+         const cart = JSON.parse(cartAsJson);
+         Object.assign(this, cart);
+      }
+   }
+
+   _setCartToLS() {
+      const cartAsJson = JSON.stringify(this);
+      localStorage.setItem('cart', cartAsJson);
+   }
+
+   addToCart(id) {
+      const currentItem = items.find(item => item.id === id);
+      const objInItems = this.items.find(item => item.id === id);
+      if (!objInItems) {
+         this.items.push({id, count: 1, price: currentItem.price})
+      } else {
+         objInItems.count++;
+         objInItems.price += currentItem.price;
+      }
+      this._reAmounTotalProperties();
+   }
+   
+   removeItemFromCart(id) {
+      const indexOfItem = this.items.findIndex(item => item.id === id);
+      this.items.splice(indexOfItem, 1)
+      this._reAmounTotalProperties();
+   }
+
+   removeFromCart(id) {
+      const currentItem = items.find(item => item.id === id);
+      const indexOfItem = this.items.findIndex(item => item.id === id);
+   
+      if (this.items[indexOfItem].count === 0) {
+         this.items.splice(indexOfItem, 1)
+      } else {
+         this.items[indexOfItem].count--;
+         this.items[indexOfItem].price -= currentItem.price;
+      }
+
+      this._reAmounTotalProperties();
+   }
+
+   _reAmounTotalProperties() {
+      this.totalCount = 0;
+      this.totalPrice = 0;
+
+      const totalAmountResult = this.items.forEach(item => {
+         const currentItem = items.find(gadget => item.id === gadget.id);
+         this.totalCount += item.count;
+         this.totalPrice += currentItem.price * item.count;
+      })
+
+      this._setCartToLS();
+      renderCartInstance.renderContent();
+      renderCartInstance._renderModalContent();
+   }
+}
+
+const cartInstance = new Cart();
+
+//------------------ Render Cart -------------------------
+
+const cartInfo = cElem('div', null, `${cartInstance.totalCount}`);
+const cartBtn = gElem('.header__wrapper__top__cart');
+const cartItemsModal = gElem('.cartItems');
+const cartItem = gElem('.cartItems');
+
+cartBtn.append(cartInfo);
+
+class RenderCart {
+   constructor() {
+      this.renderContent();
+      this.renderModal();
+   }
+
+   renderModal() {
+      cartBtn.onclick = () => {
+         const isShowModal = cartItemsModal.classList.toggle('active')
+
+         isShowModal && this._renderModalContent();
+      }
+   }
+
+   renderContent() {
+      cartInfo.innerText = `${cartInstance.totalCount}`
+   }
+
+   _renderModalContent() {
+      cartItem.innerHTML = '';
+      if (cartInstance.totalCount === 0) {
+         cartItemsModal.innerHTML = `<h5>Cart is empty</h5>`;
+         return;
+      }
+
+      const itemsFromCart = cartInstance.items;
+      const itemsForRender = [];
+
+      items.forEach(gadget => {
+         const itemFromCart = itemsFromCart.find(item => item.id === gadget.id);
+         if (itemFromCart) {
+            itemsForRender.push({
+               data: gadget,
+               count: itemFromCart.count,
+               totalPrice: itemFromCart.price,
+            })
+         }
+      })
+
+      itemsForRender.forEach(item => {
+         const container = cElem('div', 'cartItems__item');
+         const img = cElem('img', 'cartImg');
+         img.src = `img/${item.data.imgUrl}`;
+         const lSide = cElem('div', 'lSide');
+         const rSide = cElem('div', 'rSide');
+         const cartArrow = cElem('div');
+         const cartUpBtn = cElem('div', 'up');
+         cartUpBtn.id = item.data.id;
+         cartUpBtn.onclick = (e) => {
+            const cartId = Number(e.currentTarget.id);
+            cartInstance.addToCart(cartId);
+         }
+         cartUpBtn.innerHTML = `<div></div>`;
+         const cartDownBtn = cElem('div', 'down');
+         cartDownBtn.id = item.data.id;
+         cartDownBtn.onclick = (e) => {
+            const cartId = Number(e.currentTarget.id);
+            cartInstance.removeFromCart(cartId);
+         }
+         cartDownBtn.innerHTML = `<div></div>`;
+         const cartCloseBtn = cElem('div', 'close', 'X');
+         cartCloseBtn.id = item.data.id;
+         cartCloseBtn.onclick = (e) => {
+            const cartId = Number(e.currentTarget.id);
+            cartInstance.removeItemFromCart(cartId);
+         }
+         cartCloseBtn.appendChild(cartArrow);
+         rSide.append(cartUpBtn, cartDownBtn, cartCloseBtn);
+
+         // rSide.innerHTML = `
+         //    <div class="up">
+         //       <div></div>
+         //    </div>
+         //    <div class="down">
+         //       <div></div>
+         //    </div>
+         //    <div class="close">
+         //       <div>X</div>
+         //    </div>
+         // `;
+         // const cartUpBtn = document.querySelector('.up');
+         
+         const cartInfo = cElem('span', 'cartItemInfo', `x ${item.count} = ${item.totalPrice}`);
+         lSide.append(img, cartInfo);
+         container.append(lSide, rSide);
+         cartItem.appendChild(container);
+      })
+   }
+}
+
+const renderCartInstance = new RenderCart();
+
+
 

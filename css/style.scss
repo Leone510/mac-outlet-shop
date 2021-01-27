@@ -79,6 +79,7 @@ main {
 
 .header__slider {
   position: relative;
+  margin-top: 60px;
   .slick-list {
     overflow: hidden;
     .slick-track {
@@ -122,7 +123,7 @@ main {
   width: 100%;
 
   &__wrapper {
-    position: relative;
+    // position: relative;
     margin: 0 auto;
     max-width: 1024px;
     min-height: 300px;
@@ -131,11 +132,16 @@ main {
     align-items: space-between;
 
     &__top {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 60px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: #ffffff;
+      z-index: 10000;
 
       img {
         width: 120px;
@@ -144,6 +150,7 @@ main {
       }
 
       &__cart {
+        position: relative;
         margin-right: 10px;
         padding: 9px 0 0 8px;
         box-sizing: border-box;
@@ -156,6 +163,107 @@ main {
           color: #767272;
           font-size: 18px;
         }
+
+        div {
+          position: absolute;
+          width: 25px;
+          height: 25px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #ffffff;
+          background: #0e49b5;
+          border-radius: 50%;
+          left: -20%;
+          bottom: -20%;
+        }
+      }
+
+      .cartItems {
+        position: absolute;
+        padding: 10px;
+        width: 400px;
+        height: 500px;
+        overflow-y: auto;
+        display: none;
+        top: 60px;
+        right: 0;
+        background: #ffffff;
+        border: 1px solid #262626;
+        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+
+        &__item {
+          margin: 5px;
+          padding: 5px;
+          display: flex;
+          border: 1px solid #767272;
+          border-radius: 5px;
+
+          .lSide {
+            width: 90%;
+            display: flex;
+            align-items: center;
+            font-size: 200%;
+          }
+          .rSide {
+            padding: 10px 0;
+            width: 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: flex-end;
+
+            .up {
+              width: 30px;
+              height: 30px;
+              border-radius: 5px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background: rgb(57, 54, 255);
+              div {
+                height: 10px;
+                width: 10px;
+                border-top: 2px solid white;
+                border-right: 2px solid white;
+                transform: translateY(3px) rotate(-45deg);
+              }
+            }
+
+            .down {
+              width: 30px;
+              height: 30px;
+              border-radius: 5px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background: rgb(57, 54, 255);
+              div {
+                height: 10px;
+                width: 10px;
+                border-bottom: 2px solid white;
+                border-right: 2px solid white;
+                transform: translateY(-3px) rotate(45deg);
+              }
+            }
+
+            .close {
+              width: 30px;
+              height: 30px;
+              border-radius: 5px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background: #b40606;
+              color: white;
+            }
+          }
+        }
+      }
+
+      .cartItems.active {
+        display: block;
       }
     }
 
@@ -215,6 +323,7 @@ main {
 .card {
   position: relative;
   margin: 10px;
+  padding-top: 10px;
   width: 300px;
   height: 480px;
   box-sizing: border-box;

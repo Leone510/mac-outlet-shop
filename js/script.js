@@ -6,6 +6,9 @@ const cElem = (tagName, className, text) => {
    const elem = document.createElement(tagName);
    elem.className = className || '';
    elem.innerText = text || '';
+   elem.clear = function() {
+      this.innerHTML = '';
+   }
    return elem;
 }
 
@@ -176,6 +179,12 @@ const renderModalWindow = (card) => {
 
 class Utils {
    constructor() {
+      this.renderItems = [...items];
+      this.config = {
+         searchValue: '',
+         sortValue: 'def',
+      }
+
       this.colors = this._getColors();
       this.operationSystem = this._getOperationSystem();
       this.priceRange = this._getPriceRange();
@@ -184,7 +193,7 @@ class Utils {
 
    _getColors() {
       let result = [];
-      items.forEach(item => {
+      this.renderItems.forEach(item => {
          item.color.forEach(col => {
             result.includes(col) || result.push(col)
          })
@@ -194,7 +203,7 @@ class Utils {
 
    _getOperationSystem() {
       let result = [];
-      items.forEach(item => {
+      this.renderItems.forEach(item => {
          result.includes(item.os) || result.push(item.os)
       })
       return result;
@@ -211,7 +220,7 @@ class Utils {
 
    _getStorage() {
       let result = [];
-      items.forEach(item => {
+      this.renderItems.forEach(item => {
          result.includes(item.storage) || result.push(item.storage)
       })
       return result;
@@ -224,12 +233,6 @@ utils = new Utils();
 
 class Filter {
    constructor() {
-      this.renderItems = [...items];
-      this.config = {
-         searchValue: '',
-         sortValue: 'def',
-      }
-
       this.filtersArr = [
          {
             type: 'range',
@@ -399,7 +402,7 @@ class Filtration extends Filter{
          this.filteredCards = this.filteredCards.filter(item => {
             
             const name = item.name.toLowerCase();
-            const fbn = name.includes(this.config.searchValue);
+            const fbn = name.includes(utils.config.searchValue);
 
             const fbp = item.price >= this.filtersArr[0].changes.from 
                && item.price <= this.filtersArr[0].changes.to;
@@ -435,11 +438,15 @@ class Filtration extends Filter{
 
             return fbn && fbp && fbc && fbs && fbo && fbd;
          })
+
+         // utils.renderItems = this.filteredCards;
+         // asideFilter.renderFilters();
+
          renderCards(this.filteredCards);
       }
    }
 
-   sortItems(value = this.config.sortValue, arr = this.filteredCards) {
+   sortItems(value = utils.config.sortValue, arr = this.filteredCards) {
       if (value === 'def') {
          return;
       }
@@ -458,21 +465,21 @@ const filtration = new Filtration();
 
 const nameInp = gElem('#deviceInp');
 nameInp.oninput = (e) => {
-   filtration.config.searchValue = e.target.value.toLowerCase();
+   utils.config.searchValue = e.target.value.toLowerCase();
    filtration.runFilter();
 };
 const colorInp = gElem('#sortDevices');
 colorInp.onchange = (e) => {
-   filtration.config.sortValue = e.target.value;
+   utils.config.sortValue = e.target.value;
    filtration.runFilter()
 };
 const inpPriceF = gElem('.inputFrom');
-inpPriceF.oninput = (e) => {
+inpPriceF.onblur = (e) => {
    const value = e.target.value;
    filtration.changesPrice('from', value);
 };
 const inpPriceT = gElem('.inputTo');
-inpPriceT.oninput = (e) => {
+inpPriceT.oniblur = (e) => {
    const value = e.target.value;
    filtration.changesPrice('to', value);
 };
@@ -530,35 +537,37 @@ class Cart {
       localStorage.setItem('cart', cartAsJson);
    }
 
-   addToCart(id) {
+   addToCart(id, count = 0) {
       const currentItem = items.find(item => item.id === id);
       const objInItems = this.items.find(item => item.id === id);
-      if (!objInItems) {
-         this.items.push({id, count: 1, price: currentItem.price})
-      } else {
-         objInItems.count++;
-         objInItems.price += currentItem.price;
+
+      if (count < 4) {
+         if (!objInItems) {
+            this.items.push({id, count: 1, price: currentItem.price})
+         } else {
+            objInItems.count++;
+            objInItems.price += currentItem.price;
+         }
       }
+
       this._reAmounTotalProperties();
    }
    
-   removeItemFromCart(id) {
-      const indexOfItem = this.items.findIndex(item => item.id === id);
-      this.items.splice(indexOfItem, 1)
-      this._reAmounTotalProperties();
-   }
-
-   removeFromCart(id) {
+   removeFromCart(id, count) {
       const currentItem = items.find(item => item.id === id);
       const indexOfItem = this.items.findIndex(item => item.id === id);
-   
-      if (this.items[indexOfItem].count === 0) {
-         this.items.splice(indexOfItem, 1)
-      } else {
+
+      if (count > 1) {
          this.items[indexOfItem].count--;
          this.items[indexOfItem].price -= currentItem.price;
       }
+ 
+      this._reAmounTotalProperties();
+   }
 
+   removeItemFromCart(id) {
+      const indexOfItem = this.items.findIndex(item => item.id === id);
+      this.items.splice(indexOfItem, 1)
       this._reAmounTotalProperties();
    }
 
@@ -575,6 +584,7 @@ class Cart {
       this._setCartToLS();
       renderCartInstance.renderContent();
       renderCartInstance._renderModalContent();
+      renderCartInstance._renderTotalInfo();
    }
 }
 
@@ -582,10 +592,33 @@ const cartInstance = new Cart();
 
 //------------------ Render Cart -------------------------
 
-const cartInfo = cElem('div', null, `${cartInstance.totalCount}`);
+const cartInfo = cElem('div', 'cartCounter', `${cartInstance.totalCount}`);
+const innerCart = gElem('.innerCart')
 const cartBtn = gElem('.header__wrapper__top__cart');
-const cartItemsModal = gElem('.cartItems');
-const cartItem = gElem('.cartItems');
+const cartHeader = cElem('div', 'cartHead',);
+const cartItems = cElem('div', 'cartItems',);
+const cartTotalInfo = cElem('div', 'cartTotalInfo');
+const cartBottom = cElem('div', 'cartBottom');
+
+cartHeader.innerHTML = `
+   <h2>
+      Shopping Cart
+   </h2>
+   <p>
+      Checkout is almost done!
+   </p>
+`
+
+cartTotalInfo.innerHTML=`
+         <p>Total amount: <b>${cartInstance.totalCount} ptc.</b></p>
+         <p>Total price: <b>${cartInstance.totalPrice}$</b></p>
+      `
+
+cartBottom.innerHTML = `
+   <button class="cartBuy" type="submit">Buy</button>
+`
+
+innerCart.append(cartHeader, cartItems, cartTotalInfo, cartBottom);
 
 cartBtn.append(cartInfo);
 
@@ -597,9 +630,11 @@ class RenderCart {
 
    renderModal() {
       cartBtn.onclick = () => {
-         const isShowModal = cartItemsModal.classList.toggle('active')
-
-         isShowModal && this._renderModalContent();
+         const isShowModal = innerCart.classList.toggle('active')
+         if (isShowModal) {
+            this._renderModalContent();
+            this._renderTotalInfo();
+         }
       }
    }
 
@@ -608,9 +643,9 @@ class RenderCart {
    }
 
    _renderModalContent() {
-      cartItem.innerHTML = '';
+      cartItems.innerHTML = '';
       if (cartInstance.totalCount === 0) {
-         cartItemsModal.innerHTML = `<h5>Cart is empty</h5>`;
+         cartItems.innerHTML = `<h5>Cart is empty</h5>`;
          return;
       }
 
@@ -629,53 +664,76 @@ class RenderCart {
       })
 
       itemsForRender.forEach(item => {
+         let fixBtnUp = '';
+         let fixBtnDown = '';
+         if (item.count > 1) {
+            fixBtnUp = 'upBtn'
+         } else {
+            fixBtnUp = 'upBtnDis'
+         }
+         if (item.count < 4) {
+            fixBtnDown = 'downBtn'
+         } else {
+            fixBtnDown = 'downBtnDis'
+         }
+
          const container = cElem('div', 'cartItems__item');
          const img = cElem('img', 'cartImg');
          img.src = `img/${item.data.imgUrl}`;
          const lSide = cElem('div', 'lSide');
+         const middle = cElem('div', 'middle');
          const rSide = cElem('div', 'rSide');
-         const cartArrow = cElem('div');
-         const cartUpBtn = cElem('div', 'up');
+         const pieces = cElem('div', 'pcsContainer');
+         const cartItemCount = cElem('div', 'cartItemCount', item.count);
+         const cartArrowL = cElem('div', 'cartArrow', 'V');
+         const cartArrowR = cElem('div', 'cartArrow', 'V');
+         const cartUpBtn = cElem('div', fixBtnUp);
+         cartUpBtn.append(cartArrowL);
          cartUpBtn.id = item.data.id;
+         cartUpBtn.count = item.count;
          cartUpBtn.onclick = (e) => {
             const cartId = Number(e.currentTarget.id);
-            cartInstance.addToCart(cartId);
+            const cartCount = Number(e.currentTarget.count);
+            cartInstance.removeFromCart(cartId, cartCount);
          }
-         cartUpBtn.innerHTML = `<div></div>`;
-         const cartDownBtn = cElem('div', 'down');
+
+         const cartDownBtn = cElem('div', fixBtnDown);
+         cartDownBtn.append(cartArrowR);
          cartDownBtn.id = item.data.id;
+         cartDownBtn.count = item.count;
          cartDownBtn.onclick = (e) => {
             const cartId = Number(e.currentTarget.id);
-            cartInstance.removeFromCart(cartId);
+            const cartCount = Number(e.currentTarget.count);
+            cartInstance.addToCart(cartId, cartCount);
          }
-         cartDownBtn.innerHTML = `<div></div>`;
+
          const cartCloseBtn = cElem('div', 'close', 'X');
          cartCloseBtn.id = item.data.id;
          cartCloseBtn.onclick = (e) => {
             const cartId = Number(e.currentTarget.id);
             cartInstance.removeItemFromCart(cartId);
          }
-         cartCloseBtn.appendChild(cartArrow);
-         rSide.append(cartUpBtn, cartDownBtn, cartCloseBtn);
 
-         // rSide.innerHTML = `
-         //    <div class="up">
-         //       <div></div>
-         //    </div>
-         //    <div class="down">
-         //       <div></div>
-         //    </div>
-         //    <div class="close">
-         //       <div>X</div>
-         //    </div>
-         // `;
-         // const cartUpBtn = document.querySelector('.up');
-         
-         const cartInfo = cElem('span', 'cartItemInfo', `x ${item.count} = ${item.totalPrice}`);
-         lSide.append(img, cartInfo);
-         container.append(lSide, rSide);
-         cartItem.appendChild(container);
+         pieces.append(cartUpBtn, cartItemCount, cartDownBtn);
+         rSide.append(pieces, cartCloseBtn);
+         middle.innerHTML = `
+            <p>${item.data.name}</p>
+            <div class="priceWrapper">
+               <p>$${item.data.price}</p>
+            </div>
+         `
+
+         lSide.append(img);
+         container.append(lSide, middle, rSide);
+         cartItems.append(container);
       })
+   }
+
+   _renderTotalInfo() {
+      cartTotalInfo.innerHTML=`
+         <p>Total amount: <b>${cartInstance.totalCount} ptc.</b></p>
+         <p>Total price: <b>${cartInstance.totalPrice}$</b></p>
+      `
    }
 }
 

@@ -24,6 +24,8 @@ const gElem = param => {
 
 const listContainer = gElem('.cards')
 
+
+
 //------------------------------------------------------------------
 //--------------------- Slider -------------------------------------
 //------------------------------------------------------------------
@@ -154,8 +156,9 @@ const renderModalWindow = (card) => {
 class Utils {
    constructor() {
       this.colors = this._getColors();
-      this.categories = this._getCategory();
+      this.operationSystem = this._getOperationSystem();
       this.priceRange = this._getPriceRange();
+      this.storage = this._getStorage();
    }
 
    _getColors() {
@@ -168,10 +171,10 @@ class Utils {
       return result;
    }
 
-   _getCategory() {
+   _getOperationSystem() {
       let result = [];
       items.forEach(item => {
-         result.includes(item.category) || result.push(item.category)
+         result.includes(item.os) || result.push(item.os)
       })
       return result;
    }
@@ -183,6 +186,14 @@ class Utils {
          from: sortByAsc[0].price,
          to: sortByAsc[sortByAsc.length - 1].price,
       }
+   }
+
+   _getStorage() {
+      let result = [];
+      items.forEach(item => {
+         result.includes(item.storage) || result.push(item.storage)
+      })
+      return result;
    }
 }
 
@@ -201,6 +212,8 @@ class Filter {
       this.filtersArr = [
          {
             type: 'range',
+            classFr: 'inputFrom',
+            classTo: 'inputTo',
             title: 'Price',
             variant: utils.priceRange,
             changes: {...utils.priceRange}
@@ -208,15 +221,31 @@ class Filter {
          {
             type: 'check',
             title: 'Colors',
+            class: 'colorCheck',
             variants: utils.colors,
             checked: [],
          },
          {
             type: 'check',
-            title: 'Categories',
-            variants: utils.categories,
+            title: 'Storage memory',
+            class: 'storageCheck',
+            variants: utils.storage,
             checked: [],
-         }
+         },
+         {
+            type: 'check',
+            title: 'OS',
+            class: 'osCheck',
+            variants: utils.operationSystem,
+            checked: [],
+         },
+         {
+            type: 'check',
+            title: 'Display',
+            class: 'displayCheck',
+            variants: ['<2 - inch', '2 - 5 inch', '5 - 7 inch', '7 - 12 inch', '12 - 16 inch', '>16 - inch'],
+            checked: [],
+         },
       ]
    }
 
@@ -227,9 +256,17 @@ class Filter {
       filtration.runFilter();
    }
 
-   // filteredCards = [...items];
-
+   changesChecked(data, index) {
+      const switchIndex = this.filtersArr[index].checked.indexOf(data);
+      if (switchIndex > -1) {
+         this.filtersArr[index].checked.splice(switchIndex, 1)
+      } else {
+         this.filtersArr[index].checked.push(data);
+      }
+      filtration.runFilter();
+   }
 }
+const filter = new Filter;
 
 //---------- Render aside filters ------------------------
 
@@ -275,11 +312,15 @@ class RenderFilter extends Filter {
    }
 
    _renderContenCheck(item) {
+      const indexToRemove = item.variants.indexOf(null);
+      indexToRemove === -1 || item.variants.splice(indexToRemove, 1);
       return item.variants.map(variant => {
          const title = cElem('span', null, variant);
          const label = cElem('label');
          const inp = cElem('input');
          inp.type = 'checkbox';
+         inp.name = variant;
+         inp.classList.add(item.class);
          label.append(inp, title);
          return label;
       })
@@ -288,15 +329,17 @@ class RenderFilter extends Filter {
    _renderContenRange(item) {
       const containerFrom = cElem('div');
       const labelFrom = cElem('label', null, 'From');
-      const inputFrom = cElem('input', 'inputFrom');
+      const inputFrom = cElem('input');
       inputFrom.value = item.variant.from;
+      inputFrom.classList.add(item.classFr);
       
       containerFrom.append(labelFrom, inputFrom);
 
       const containerTo = cElem('div');
       const labelTo = cElem('label', null, 'To');
-      const inputTo = cElem('input', 'inputTo');
+      const inputTo = cElem('input');
       inputTo.value = item.variant.to;
+      inputTo.classList.add(item.classTo);
       
       containerTo.append(labelTo, inputTo);
 
@@ -317,23 +360,51 @@ class Filtration extends Filter{
       
       this.runFilter = () => {
          this.filteredCards = [...items];
-         this.filterByName();
+
          this.sortItems();
-         this.filterByPrice();
-         renderCards(this.filteredCards)
+
+         this.filteredCards = this.filteredCards.filter(item => {
+            
+            const name = item.name.toLowerCase();
+            const fbn = name.includes(this.config.searchValue);
+
+            const fbp = item.price >= this.filtersArr[0].changes.from 
+               && item.price <= this.filtersArr[0].changes.to;
+
+            const fbc = this.filtersArr[1].checked.length < 1 ||
+               item.color.some(color => this.filtersArr[1].checked.includes(color));
+
+            const fbs = this.filtersArr[2].checked.length < 1 ||
+               this.filtersArr[2].checked.includes(item.storage);
+
+            const fbo = this.filtersArr[3].checked.length < 1 ||
+               this.filtersArr[3].checked.includes(item.os);
+
+
+            const ranges = this.filtersArr[4].checked.map(range => {
+               if (range === '>16 - inch') {
+                  return [16, 100];
+               }
+               if (range === '<2 - inch') {
+                  return [0, 2];
+               }
+                 return range.split(' ').filter(num => !isNaN(num))
+            })
+            const fbd = this.filtersArr[4].checked.length < 1 ||
+               (item.display !== null) &&
+               ranges.some(elem => {
+                  const from = +elem[0];
+                  const to = +elem[1];
+                  const res = from <= item.display && to >= item.display;
+                  return res;
+               })
+
+
+            return fbn && fbp && fbc && fbs && fbo && fbd;
+         })
+         renderCards(this.filteredCards);
       }
    }
-
-//--  1
-
-   filterByName() {
-      this.filteredCards = items.filter((item) => {
-         const name = item.name.toLowerCase();
-         return name.includes(this.config.searchValue);
-      });
-   }
-
-//--  2
 
    sortItems(value = this.config.sortValue, arr = this.filteredCards) {
       if (value === 'def') {
@@ -345,36 +416,58 @@ class Filtration extends Filter{
          return 0;
       })
    }
-
-//--  3
-
-   filterByPrice() {
-         this.filteredCards = this.filteredCards.filter(item => {
-            const result = item.price >= filtration.filtersArr[0].changes.from 
-            && item.price <= filtration.filtersArr[0].changes.to;
-            return result;
-         })
-
-      
-   }
 }
+
 
 const filtration = new Filtration();
 
-gElem('#deviceInp').oninput = (e) => {
+
+const nameInp = gElem('#deviceInp');
+nameInp.oninput = (e) => {
    filtration.config.searchValue = e.target.value.toLowerCase();
    filtration.runFilter();
 };
-gElem('#sortDevices').onchange = (e) => {
+const colorInp = gElem('#sortDevices');
+colorInp.onchange = (e) => {
    filtration.config.sortValue = e.target.value;
-   filtration.runFilter()};
-
-gElem('.inputFrom').oninput = (e) => {
+   filtration.runFilter()
+};
+const inpPriceF = gElem('.inputFrom');
+inpPriceF.oninput = (e) => {
    const value = e.target.value;
    filtration.changesPrice('from', value);
-}
-
-gElem('.inputTo').oninput = (e) => {
+};
+const inpPriceT = gElem('.inputTo');
+inpPriceT.oninput = (e) => {
    const value = e.target.value;
    filtration.changesPrice('to', value);
-}
+};
+const inpsColor = document.querySelectorAll('.colorCheck');
+inpsColor.forEach(item => {
+   item.oninput = (e) => {
+      const color = e.target.name;
+      filtration.changesChecked(color, 1);
+   }
+})
+const inpsStorage = document.querySelectorAll('.storageCheck');
+inpsStorage.forEach(item => {
+   item.oninput = (e) => {
+      const storageSize = +e.target.name;
+      filtration.changesChecked(storageSize, 2);
+   }
+})
+const inpsOS = document.querySelectorAll('.osCheck');
+inpsOS.forEach(item => {
+   item.oninput = (e) => {
+      const os = e.target.name;
+      filtration.changesChecked(os, 3);
+   }
+})
+const checkOS = document.querySelectorAll('.displayCheck');
+checkOS.forEach(item => {
+   item.oninput = (e) => {
+      const displaysRange = e.target.name;
+      filtration.changesChecked(displaysRange, 4);
+   }
+})
+

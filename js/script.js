@@ -103,7 +103,9 @@ const renderCard = device => {
 
    const statsLeft = cElem('div', 'card__stats__left');
    const statsRight = cElem('div', 'card__stats__right');
-   statsLeft.innerHTML = `<p>${device.orderInfo.reviews}% Positive reviews<br/>avarage</p>`
+   let reviewsStatus = '';
+   device.orderInfo.reviews >= 50 ? reviewsStatus = 'above ' : reviewsStatus = 'belowe ';
+   statsLeft.innerHTML = `<p>${device.orderInfo.reviews}% Positive reviews<br/>${reviewsStatus}avarage</p>`
    statsRight.innerHTML = `<p>${device.price}<br/>orders</p>`
    innerCard.statistic.append(statsLeft, statsRight);
    container.append(...(Object.values(innerCard)));
@@ -368,7 +370,14 @@ class RenderFilter extends Filter {
       const inputFrom = cElem('input', 'inputRangeFrom');
       inputFrom.value = item.variant.from;
       inputFrom.classList.add(item.classFr);
-      
+      const setRangeSlider = (i, value) => {
+         let arr = [null, null];
+         arr[i] = value;
+         rangeSlider.noUiSlider.set(arr);
+      }
+      inputFrom.addEventListener('change', (e) => {
+         setRangeSlider(0, e.currentTarget.value);
+      })
       containerFrom.append(labelFrom, inputFrom);
 
       const containerTo = cElem('div');
@@ -376,10 +385,29 @@ class RenderFilter extends Filter {
       const inputTo = cElem('input', 'inputRangeTo');
       inputTo.value = item.variant.to;
       inputTo.classList.add(item.classTo);
-      
+      inputTo.addEventListener('change', (e) => {
+         setRangeSlider(1, e.currentTarget.value);
+      })
       containerTo.append(labelTo, inputTo);
 
-      return [containerFrom, containerTo];
+      const inputs = [inputFrom, inputTo];
+      const rangeSlider = cElem('div', 'rangeSlider');
+      noUiSlider.create(rangeSlider, {
+         start: [utils.priceRange.from, utils.priceRange.to],
+         connect: true,
+         step: 1,
+         padding: 10,
+         range: {
+             'min': 0,
+             'max': 4000,
+         }
+     });
+
+     rangeSlider.noUiSlider.on('update', function(values, handle) {
+        inputs[handle].value = Math.round(values[handle]);
+     })
+
+      return [containerFrom, containerTo, rangeSlider];
    }
 }
 
@@ -439,9 +467,6 @@ class Filtration extends Filter{
             return fbn && fbp && fbc && fbs && fbo && fbd;
          })
 
-         // utils.renderItems = this.filteredCards;
-         // asideFilter.renderFilters();
-
          renderCards(this.filteredCards);
       }
    }
@@ -479,10 +504,18 @@ inpPriceF.onblur = (e) => {
    filtration.changesPrice('from', value);
 };
 const inpPriceT = gElem('.inputTo');
-inpPriceT.oniblur = (e) => {
+inpPriceT.onblur = (e) => {
    const value = e.target.value;
    filtration.changesPrice('to', value);
 };
+const rangeSliderLower = gElem ('.noUi-handle-lower');
+rangeSliderLower.onmouseup = () => {
+   filtration.changesPrice('from', inpPriceF.value);
+}
+const rangeSliderUpper = gElem ('.noUi-handle-upper');
+rangeSliderUpper.onmouseup = () => {
+   filtration.changesPrice('to', inpPriceT.value);
+}
 const inpsColor = document.querySelectorAll('.colorCheck');
 inpsColor.forEach(item => {
    item.oninput = (e) => {

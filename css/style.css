@@ -734,8 +734,6 @@ main {
 aside {
   margin: 10px 20px;
   width: 400px;
-  position: -webkit-sticky;
-  position: sticky;
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
@@ -793,6 +791,9 @@ aside {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
@@ -809,6 +810,43 @@ aside {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+}
+
+.filterItem__content .rangeSlider {
+  width: calc(100% - 10px);
+  margin-top: 40px;
+}
+
+.filterItem__content .noUi-target {
+  height: 3px;
+  background: #c5d0e6;
+  border: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border-radius: 50%;
+}
+
+.filterItem__content .noUi-connect {
+  background: #6495ed;
+}
+
+.filterItem__content .noUi-handle {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 3px solid #6495ed;
+}
+
+.filterItem__content .noUi-horizontal .noUi-handle {
+  width: 22px;
+  height: 22px;
+  top: -9px;
+}
+
+.filterItem__content .noUi-handle::after,
+.filterItem__content .noUi-handle::before {
+  display: none;
 }
 
 @-webkit-keyframes filterDropdown {
